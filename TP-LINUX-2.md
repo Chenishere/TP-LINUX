@@ -98,6 +98,8 @@ yce@node1:~$ sudo systemctl enable ssh
 Synchronizing state of ssh.service with SysV service script with /lib/systemd/systemd-sysv-install.
 Executing: /lib/systemd/systemd-sysv-install enable ssh
 ```
+### 3. Etude du service SSH
+🌞 Analyser le service en cours de fonctionnement
 #### Afficher le statut du service
 ```bash
 yce@node1:~$ systemctl status ssh
