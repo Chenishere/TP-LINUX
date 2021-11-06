@@ -14,7 +14,7 @@ yce@node1:~$
 ```
 ## 2. Config réseau
 
-🌞 **Config réseau fonctionnelle**
+🌞 **Config réseau fonctionnelle  **
 ### Ping 1.1.1.1
 ```bash
 yce@node1:~$ ping 1.1.1.1
