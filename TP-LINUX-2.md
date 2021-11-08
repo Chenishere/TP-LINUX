@@ -135,7 +135,55 @@ yce@node1:~$ sudo ss -ltnp
 LISTEN              0                   128                                       [::]:22                                     [::]:*                 users:(("sshd",pid=558,fd=4))
 ```
 #### Afficher les logs du service ssh
-```bash
 
+```bash
+yce@node1:/var/log$ sudo journalctl -ef  | grep ssh
+nov. 07 00:03:20 yce-vm sshd[543]: Server listening on 0.0.0.0 port 22.
+nov. 07 00:03:20 yce-vm sshd[543]: Server listening on :: port 22.
+nov. 07 00:07:49 yce-vm sshd[1288]: Accepted password for yce from 192.168.57.1 port 53881 ssh2
+nov. 07 00:07:49 yce-vm sshd[1288]: pam_unix(sshd:session): session opened for user yce by (uid=0)
 ```
+```bash
+yce@node1:/var/log$ cd /var/log
+yce@node1:/var/log$ ls
+alternatives.log  boot.log fontconfig.log  lastlog 
+bootstrap.log     dpkg.log    gpu-manager.log   lightdm  syslog             
+auth.log          faillog        kern.log      ubuntu-advantage.log   Xorg.0.log
+```
+🌞 Connectez vous au serveur
+```bash
+ynce@MacBook-Pro-de-Yanice ~ % ssh yce@192.168.57.6
+no such identity: /Users/ynce/.ssh/id_ed2551: No such file or directory
+yce@192.168.57.6's password: 
+Welcome to Ubuntu 20.04.3 LTS (GNU/Linux 5.11.0-38-generic x86_64)
+yce@node1:~$ 
+```
+### 4. Modification de la configuratiion du serveur
+🌞 Modifier le comportement du service
+```bash
+yce@node1:/etc/ssh/sshd_config.d$ cd /etc/ssh/sshd_config.d
+yce@node1:/etc/ssh/sshd_config.d$ sudo nano /etc/ssh/sshd_config
+yce@node1:/etc/ssh/sshd_config.d$ sudo cat /etc/ssh/sshd_config
+#	$OpenBSD: sshd_config,v 1.103 2018/04/09 20:41:22 tj Exp $
+
+# This is the sshd server system-wide configuration file.  See
+# sshd_config(5) for more information.
+
+# This sshd was compiled with PATH=/usr/bin:/bin:/usr/sbin:/sbin
+
+# The strategy used for options in the default sshd_config shipped with
+# OpenSSH is to specify options with their default value where
+# possible, but leave them commented.  Uncommented options override the
+# default value.
+
+Include /etc/ssh/sshd_config.d/*.conf
+
+#Port 1025
+#AddressFamily any
+#ListenAddress 0.0.0.0
+#ListenAddress ::
+```
+
+
+
 
