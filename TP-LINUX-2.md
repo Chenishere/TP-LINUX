@@ -266,6 +266,28 @@ nov. 08 09:10:39 node1.tp2.linux systemd[1]: vsftpd.service: Succeeded.
 nov. 08 09:10:46 node1.tp2.linux polkitd(authority=local)[461]: Operator of unix-process:18023:875339 successfully authenticated as unix-user:yce to gain ONE-SHOT authorization for action org.freedesktop.systemd1.manage-units for system-bus-name::1.150 [systemctl restart vsftpd.service vsftpd.service] (owned by unix-user:yce)
 nov. 08 09:10:46 node1.tp2.linux systemd[1]: vsftpd.service: Succeeded.
 ```
+### Partie 3 : Création de votre propre service
+🌞 Donnez les deux commandes pour établir ce petit chat avec netcat
+```bash
+yce@node1:/$ sudo apt install netcat
+[sudo] password for yce: 
+Reading package lists... Done
+Building dependency tree       
+Reading state information... Done
+The following NEW packages will be installed:
+  netcat
+0 upgraded, 1 newly installed, 0 to remove and 89 not upgraded.
+Need to get 2 172 B of archives.
+After this operation, 15,4 kB of additional disk space will be used.
+Get:1 http://fr.archive.ubuntu.com/ubuntu focal/universe amd64 netcat all 1.206-1ubuntu1 [2 172 B]
+Fetched 2 172 B in 0s (29,8 kB/s)
+Selecting previously unselected package netcat.
+(Reading database ... 199699 files and directories currently installed.)
+Preparing to unpack .../netcat_1.206-1ubuntu1_all.deb ...
+Unpacking netcat (1.206-1ubuntu1) ...
+Setting up netcat (1.206-1ubuntu1) ...
+```
+![HF](https://media0.giphy.com/media/2AYQQJsqDrDHy/giphy.gif)
 
 
 
