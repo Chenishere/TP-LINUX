@@ -178,11 +178,95 @@ yce@node1:/etc/ssh/sshd_config.d$ sudo cat /etc/ssh/sshd_config
 
 Include /etc/ssh/sshd_config.d/*.conf
 
-#Port 1025
+#Port 2500
 #AddressFamily any
 #ListenAddress 0.0.0.0
 #ListenAddress ::
+yce@node1:/etc/ssh/sshd_config.d$ ss -l | grep ssh
+u_str   LISTEN   0        4096             /run/user/1000/gnupg/S.gpg-agent.ssh 25834                                           * 0                             
+u_str   LISTEN   0        10                         /run/user/1000/keyring/ssh 26398                                           * 0                             
+u_str   LISTEN   0        128                   /tmp/ssh-SpYnnEOiiqGE/agent.830 26122                                           * 0                             
+tcp     LISTEN   0        128                                           0.0.0.0:ssh                                       0.0.0.0:*                             
+tcp     LISTEN   0        128                                              [::]:ssh                                          [::]:*                             
 ```
+### 2. Lancement du service FTP
+🌞 Lancer le service vsftpd
+```bash
+yce@node1:/etc/ssh/sshd_config.d$ sudo apt install vsftpd
+Reading package lists... Done
+Building dependency tree       
+Reading state information... Done
+The following NEW packages will be installed:
+  vsftpd
+0 upgraded, 1 newly installed, 0 to remove and 89 not upgraded.
+Need to get 115 kB of archives.
+After this operation, 338 kB of additional disk space will be used.
+Get:1 http://fr.archive.ubuntu.com/ubuntu focal/main amd64 vsftpd amd64 3.0.3-12 [115 kB]
+Fetched 115 kB in 0s (661 kB/s)
+Preconfiguring packages ...
+Selecting previously unselected package vsftpd.
+(Reading database ... 199642 files and directories currently installed.)
+Preparing to unpack .../vsftpd_3.0.3-12_amd64.deb ...
+Unpacking vsftpd (3.0.3-12) ...
+Setting up vsftpd (3.0.3-12) ...
+Created symlink /etc/systemd/system/multi-user.target.wants/vsftpd.service → /lib/systemd/system/vsftpd.service.
+Processing triggers for man-db (2.9.1-1) ...
+Processing triggers for systemd (245.4-4ubuntu3.11) ...
+```
+🌞 Lancer le service vsftpd
+```bash
+yce@node1:/etc/ssh/sshd_config.d$ systemctl restart vsftpd.service
+==== AUTHENTICATING FOR org.freedesktop.systemd1.manage-units ===
+Authentication is required to restart 'vsftpd.service'.
+Authenticating as: yce,,, (yce)
+Password: 
+==== AUTHENTICATION COMPLETE ===
+yce@node1:/etc/ssh/sshd_config.d$ systemctl status vsftpd.service 
+● vsftpd.service - vsftpd FTP server
+     Loaded: loaded (/lib/systemd/system/vsftpd.service; enabled; vendor preset: enabled)
+     Active: active (running) since Mon 2021-11-08 09:10:46 CET; 25s ago
+    Process: 18037 ExecStartPre=/bin/mkdir -p /var/run/vsftpd/empty (code=exited, status=0/SUCCESS)
+   Main PID: 18038 (vsftpd)
+      Tasks: 1 (limit: 2312)
+     Memory: 528.0K
+     CGroup: /system.slice/vsftpd.service
+             └─18038 /usr/sbin/vsftpd /etc/vsftpd.conf
+
+nov. 08 09:10:46 node1.tp2.linux systemd[1]: Starting vsftpd FTP server...
+nov. 08 09:10:46 node1.tp2.linux systemd[1]: Started vsftpd FTP server.
+```
+🌞 Analyser le service en cours de fonctionnement
+```bash
+yce@node1:/etc/ssh/sshd_config.d$ systemctl status vsftpd.service 
+● vsftpd.service - vsftpd FTP server
+     Loaded: loaded (/lib/systemd/system/vsftpd.service; enabled; vendor preset: enabled)
+     Active: active (running) since Mon 2021-11-08 09:10:46 CET; 25s ago
+    Process: 18037 ExecStartPre=/bin/mkdir -p /var/run/vsftpd/empty (code=exited, status=0/SUCCESS)
+   Main PID: 18038 (vsftpd)
+      Tasks: 1 (limit: 2312)
+     Memory: 528.0K
+     CGroup: /system.slice/vsftpd.service
+             └─18038 /usr/sbin/vsftpd /etc/vsftpd.conf
+
+nov. 08 09:10:46 node1.tp2.linux systemd[1]: Starting vsftpd FTP server...
+nov. 08 09:10:46 node1.tp2.linux systemd[1]: Started vsftpd FTP server.
+```
+```bash
+yce@node1:/etc/ssh/sshd_config.d$ ps -ef | grep vsftpd
+root       18038       1  0 09:10 ?        00:00:00 /usr/sbin/vsftpd /etc/vsftpd.conf
+yce        18080    2061  0 09:16 pts/2    00:00:00 grep --color=auto vsftpd
+```
+```bash
+yce@node1:/$ cd /var/log
+yce@node1:/var/log$ sudo journalctl -ef  | grep vsftpd.service
+nov. 08 09:09:31 node1.tp2.linux polkitd(authority=local)[461]: Operator of unix-process:17976:868909 successfully authenticated as unix-user:yce to gain ONE-SHOT authorization for action org.freedesktop.systemd1.manage-units for system-bus-name::1.140 [systemctl restart vsftpd.service] (owned by unix-user:yce)
+nov. 08 09:09:31 node1.tp2.linux systemd[1]: vsftpd.service: Succeeded.
+nov. 08 09:10:39 node1.tp2.linux polkitd(authority=local)[461]: Operator of unix-process:18023:875339 successfully authenticated as unix-user:yce to gain ONE-SHOT authorization for action org.freedesktop.systemd1.manage-units for system-bus-name::1.150 [systemctl restart vsftpd.service vsftpd.service] (owned by unix-user:yce)
+nov. 08 09:10:39 node1.tp2.linux systemd[1]: vsftpd.service: Succeeded.
+nov. 08 09:10:46 node1.tp2.linux polkitd(authority=local)[461]: Operator of unix-process:18023:875339 successfully authenticated as unix-user:yce to gain ONE-SHOT authorization for action org.freedesktop.systemd1.manage-units for system-bus-name::1.150 [systemctl restart vsftpd.service vsftpd.service] (owned by unix-user:yce)
+nov. 08 09:10:46 node1.tp2.linux systemd[1]: vsftpd.service: Succeeded.
+```
+
 
 
 
