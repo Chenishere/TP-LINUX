@@ -1,3 +1,4 @@
+# Script for download a youtube video
 downloads="/etc/systemd/system/yt/downloads"
 logs="/var/log/yt"
 if [[ (-d "$dl") && (-d "$log")]]; then
