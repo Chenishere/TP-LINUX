@@ -1,5 +1,5 @@
-# This is an ID card script by Yanice, run it as sudo for no right problems ans install curl for the random cat meme. Have fun !
 source /etc/os-release
+# This is an ID card script by Yanice, run it as sudo for no right problems ans install curl for the random cat meme. Have fun !
 MachineName=$(hostname)
 echo "Machine name : $MachineName"
 
@@ -16,19 +16,17 @@ echo "RAM : $ramavailable RAM restante sur $ramtotal RAM totale"
 
 echo "Disque : $(df -h | grep /dev/sda5 | cut -d" " -f12) left"
 
-Top5="$(ps -eo pid,ppid,cmd,%mem,%cpu --sort=-%mem | grep -v PPID | head -n 5)"
 echo "Top 5 processes by RAM usage :"
-echo "$Top5" | while read line
-do
-  echo "  - $line"  
-done
+
+echo "- $(ps --sort -rss -eo %mem,cmd,pid | head -1)"
+echo "- $(ps --sort -rss -eo %mem,cmd,pid | head -2 | tail -n+2)"
+echo "- $(ps --sort -rss -eo %mem,cmd,pid | head -3 | tail -n+3)"
+echo "- $(ps --sort -rss -eo %mem,cmd,pid | head -4 | tail -n+4)"
+echo "- $(ps --sort -rss -eo %mem,cmd,pid | head -5 | tail -n+5)"
+echo "- $(ps --sort -rss -eo %mem,cmd,pid | head -6 | tail -n+6)"
 
 echo "Listening ports :"
-ss -alnpt | sed "1 d" | while read  line
-do
-    ports=$(echo $line | tr -s ' ' | cut -d' ' -f4 | rev | cut -d':'  -f1 | rev)
-    echo "- $ports : "
-done
+lsof -i -P | grep LISTEN | uniq -w 20 | awk '{print "- " $9 " : " $1}' | tr ":" " " | awk '{print " - " $3 " : " $4}'
 
 randomcat=$(curl https://api.thecatapi.com/v1/images/search --silent | cut -d'"' -f10)
 echo "Here's your random cat : "$randomcat
