@@ -26,7 +26,8 @@ echo "- $(ps --sort -rss -eo %mem,cmd,pid | head -5 | tail -n+5)"
 echo "- $(ps --sort -rss -eo %mem,cmd,pid | head -6 | tail -n+6)"
 
 echo "Listening ports :"
-lsof -i -P | grep LISTEN | uniq -w 20 | awk '{print "- " $9 " : " $1}' | tr ":" " " | awk '{print " - " $3 " : " $4}'
+lsof -i -P | grep LISTEN | uniq -w 20 | awk '{print "- " $9 " : " $1}' | tr ":" " " | awk '{print " - " $3 " : " $4}'#
 
+# You need to install curl for the random cat
 randomcat=$(curl https://api.thecatapi.com/v1/images/search --silent | cut -d'"' -f10)
 echo "Here's your random cat : "$randomcat
