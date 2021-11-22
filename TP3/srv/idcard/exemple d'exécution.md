@@ -1,23 +1,22 @@
 # Here an example of the script 🌞 :
 ```bash
-yce@yce-vm:/srv/idcard$ bash  idcard.sh
+yce@yce-vm:/srv/idcard$ sudo bash idcard.sh
 Machine name : yce-vm
 Os Ubuntu and kernel version is 20.04
 IP : 192.168.57.255
-RAM : 1,2Gi RAM restante sur 1,9Gi RAM totale
-Disque : 2,0G left
+RAM : 1,4Gi RAM restante sur 1,9Gi RAM totale
+Disque : 2,8G left
 Top 5 processes by RAM usage :
-  - 1266       1 /usr/bin/python3 /usr/bin/u  3.8  0.0
-  - 41502       1 /usr/libexec/fwupd/fwupd     3.6  0.0
-  - 587     570 /usr/lib/xorg/Xorg -core :0  3.2  0.0
-  - 980     839 xfwm4 --replace              3.2  0.0
-  - 1010     839 xfdesktop                    1.7  0.0
+- %MEM CMD                             PID
+-  4.1 xfwm4 --replace                 993
+-  3.4 /usr/lib/xorg/Xorg -core :0     604
+-  2.2 /usr/bin/python3 /usr/bin/b    1077
+-  2.0 /usr/bin/python3 /usr/bin/b    1166
+-  2.0 /usr/lib/x86_64-linux-gnu/x    1029
 Listening ports :
-- 53 : 
-- 22 : 
-- 631 : 
-- 22 : 
-- 631 : 
-Here's your random cat : https://cdn2.thecatapi.com/images/MjAzMjY3MQ.jpg
+ - 53 : systemd-r
+ - 631 : cupsd
+ - 22 : sshd
+Here's your random cat : https://cdn2.thecatapi.com/images/c8i.jpg
 ```
-![HF](https://cdn2.thecatapi.com/images/MjAzMjY3MQ.jpg)
+                    ![HF](https://cdn2.thecatapi.com/images/c8i.jpg)
