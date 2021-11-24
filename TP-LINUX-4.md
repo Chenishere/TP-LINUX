@@ -86,15 +86,15 @@ rtt min/avg/max/mdev = 12.857/15.322/17.788/2.468 ms
 ```
 ## 🌞 Définissez node1.tp4.linux comme nom à la machine
 ```bash
-[yce@localhost ~]$ cat /etc/hostname 
+[yce@node1 /]$ cat /etc/hostname 
 node1.tp4.linux
-[yce@localhost ~]$ hostname
+[yce@node1 /]$ hostname
 node1.tp4.linux
 ```
 
 ## 🌞 Installez NGINX en vous référant à des docs online
 ```bash
-[yce@localhost ~]$ sudo dnf install nginx
+[yce@node1 /]$ sudo dnf install nginx
 Dernière vérification de l’expiration des métadonnées effectuée il y a 1 day, 6:16:56 le mar. 23 nov. 2021 17:16:48 CET.
 Le paquet nginx-1:1.14.1-9.module+el8.4.0+542+81547229.x86_64 est déjà installé.
 Dépendances résolues.
@@ -103,7 +103,7 @@ Terminé !
 ```
 ## 🌞 Analysez le service NGINX
 ```bash
-[yce@localhost ~]$ ps -ef | grep nginx
+[yce@node1 /]$ ps -ef | grep nginx
 yce         8470       1  0 23:48 ?        00:00:00 nginx: master process /usr/sbin/nginx
 nginx       8471    8470  0 23:48 ?        00:00:00 nginx: worker process
 yce         8479    5795  0 23:48 pts/1    00:00:00 grep --color=auto ngin
@@ -125,50 +125,41 @@ drwxr-xr-x.  2 root root  143 Nov 23 11:52 modules
 ```
 # 🌞 Configurez le firewall pour autoriser le trafic vers le service NGINX
 ```bash
-[yce@localhost yum.repos.d]$ sudo firewall-cmd --add-port=80/tcp --permanent
+[yce@node1 /]$ sudo firewall-cmd --add-port=80/tcp --permanent
 success
 ```
 #### 🌞 Tester le bon fonctionnement du service
+```bash
+[yce@node1 /]$ curl http://10.250.1.67:80
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+...
+```
 
+🌞 Changer le port d'écoute
+## faites écouter NGINX sur le port 8080
+```bash
+server {
+        listen       8080 default_server;
+        listen       [::]:8080 default_server;
+```
+```bash
+[yce@node1 /]$ sudo ss -altnp | grep nginx
+LISTEN 0      128          0.0.0.0:8080      0.0.0.0:*    users:(("nginx",pid=85226,fd=8),("nginx",pid=85225,fd=8))
+LISTEN 0      128             [::]:8080         [::]:*    users:(("nginx",pid=85226,fd=9),("nginx",pid=85225,fd=9))
+```
+```bash
+[yce@node1 /]$ sudo firewall-cmd --remove-port=80/tcp --permanent
+success
+[yce@node1 /]$ sudo firewall-cmd --add-port=8080/tcp --permanent
+success
+[yce@node1 /]$ sudo firewall-cmd --reload
+success
+```
+#### prouvez avec une commande curl sur votre machine que vous pouvez désormais visiter le port 8080
+```bash
+[yce@node1 /]$ curl http://10.250.1.67:8080
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+...
+```
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+# 🌞 Changer l'utilisateur qui lance le service
