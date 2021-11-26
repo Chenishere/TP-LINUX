@@ -87,12 +87,44 @@ password for the root user.  If you've just installed MariaDB, and
 you haven't set the root password yet, the password will be blank,
 so you should just press enter here.
 ```
-\textbf{Question 1}
 
+**Question 1**
+```bash
+Set root password? [Y/n]
+```
+change le mot de passe MySQL de l’administrateur root 
 
-- plusieurs questions successives vont vous être posées
-  - expliquez avec des mots, de façon concise, ce que signifie chacune des questions
-  - expliquez pourquoi vous répondez telle ou telle réponse (avec la sécurité en tête)
+**Question 2**
+```bash
+Remove anonymous users? [Y/n]
+```
+supprime les utilisateurs anonymes
+
+**Question 3**
+```bash
+Disallow root login remotely?
+```
+désactive l’accès distant à l’utilisateur root
+
+**Question 4**
+```bash
+Remove test database and access to it? [Y/n]
+```
+supprimer la base de données de test
+
+**Question 5**
+```bash
+Reload privilege tables now? [Y/n]
+```
+Nous demande si on veut supprimer la table des privileges
+
+```bash
+All done!  If you've completed all of the above steps, your MariaDB
+installation should now be secure.
+
+Thanks for using MariaDB!
+[yce@db ~]$ 
+```
 
 > Il existe des tonnes de guides sur internet pour expliquer ce que fait cette commande et comment répondre aux questions, afin d'augmenter le niveau de sécurité de la base.
 
@@ -106,29 +138,42 @@ so you should just press enter here.
 - donc, sur la VM `db.tp5.linux` toujours :
 
 ```bash
-# Connexion à la base de données
-# L'option -p indique que vous allez saisir un mot de passe
-# Vous l'avez défini dans le mysql_secure_installation
-$ sudo mysql -u root -p
+[yce@db ~]$ sudo mysql -u root -p
+[sudo] Mot de passe de yce : 
+Enter password: 
+Welcome to the MariaDB monitor.  Commands end with ; or \g.
+Your MariaDB connection id is 64
+Server version: 10.3.28-MariaDB MariaDB Server
+
+Copyright (c) 2000, 2018, Oracle, MariaDB Corporation Ab and others.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
 ```
 
 Puis, dans l'invite de commande SQL :
 
 ```sql
-# Création d'un utilisateur dans la base, avec un mot de passe
-# L'adresse IP correspond à l'adresse IP depuis laquelle viendra les connexions. Cela permet de restreindre les IPs autorisées à se connecter.
-# Dans notre cas, c'est l'IP de web.tp5.linux
-# "meow" c'est le mot de passe :D
-CREATE USER 'nextcloud'@'10.5.1.11' IDENTIFIED BY 'meow';
+[yce@db ~]$ sudo mysql -u root -p
+Enter password: 
+Welcome to the MariaDB monitor.  Commands end with ; or \g.
+Your MariaDB connection id is 66
+Server version: 10.3.28-MariaDB MariaDB Server
 
-# Création de la base de donnée qui sera utilisée par NextCloud
-CREATE DATABASE IF NOT EXISTS nextcloud CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+Copyright (c) 2000, 2018, Oracle, MariaDB Corporation Ab and others.
 
-# On donne tous les droits à l'utilisateur nextcloud sur toutes les tables de la base qu'on vient de créer
-GRANT ALL PRIVILEGES ON nextcloud.* TO 'nextcloud'@'10.5.1.11';
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
 
-# Actualisation des privilèges
-FLUSH PRIVILEGES;
+MariaDB [(none)]> CREATE USER 'nextcloud'@'10.5.1.11' IDENTIFIED BY 'meow';
+Query OK, 0 rows affected (0.001 sec)
+
+MariaDB [(none)]> CREATE DATABASE IF NOT EXISTS nextcloud CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+Query OK, 1 row affected (0.000 sec)
+
+MariaDB [(none)]> CREATE DATABASE IF NOT EXISTS nextcloud CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+Query OK, 0 rows affected, 1 warning (0.000 sec)
+
+MariaDB [(none)]> FLUSH PRIVILEGES;
+Query OK, 0 rows affected (0.001 sec)
 ```
 
 ## 3. Test
@@ -147,9 +192,19 @@ Il faudrait donc qu'on teste ça, à la main, depuis la machine `web.tp5.linux`.
 Bah c'est parti ! Il nous faut juste un client pour nous connecter à la base depuis la ligne du commande : il existe une commande `mysql` pour ça.
 
 🌞 **Installez sur la machine `web.tp5.linux` la commande `mysql`**
-
-- vous utiliserez la commande `dnf provides` pour trouver dans quel paquet se trouve cette commande
-
+```bash
+[yce@web ~]$ sudo dnf install mysql
+Dernière vérification de l’expiration des métadonnées effectuée il y a 0:11:24 le ven. 26 nov. 2021 15:34:27 CET.
+Le paquet mysql-8.0.26-1.module+el8.4.0+652+6de068a7.x86_64 est déjà installé.
+Dépendances résolues.
+Rien à faire.
+Terminé !
+```
+```bash
+[yce@web ~]$ sudo dnf provides mysql 
+Dernière vérification de l’expiration des métadonnées effectuée il y a 0:10:16 le ven. 26 nov. 2021 15:34:27 CET.
+mysql-8.0.26-1.module+el8.4.0+652+6de068a7.x86_64 : MySQL client programs and shared libraries
+```
 🌞 **Tester la connexion**
 
 - utilisez la commande `mysql` depuis `web.tp5.linux` pour vous connecter à la base qui tourne sur `db.tp5.linux`
@@ -167,7 +222,23 @@ Bah c'est parti ! Il nous faut juste un client pour nous connecter à la base de
   - et constater que la base est actuellement vide
 
 > Je veux donc dans le compte-rendu la commande `mysql` qui permet de se co depuis `web.tp5.linux` au service de base de données qui tourne sur `db.tp5.linux`, ainsi que le `SHOW TABLES`.
+```bash
+[yce@web ~]$  mysql -u nextcloud -p -P 3306  -h 10.5.1.12 nextcloud
+Enter password: 
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 85
+Server version: 5.5.5-10.3.28-MariaDB MariaDB Server
 
+Copyright (c) 2000, 2021, Oracle and/or its affiliates.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> 
+```
 ---
 
 C'est bon ? Ca tourne ? [**Go installer NextCloud maintenant !**](./web.md)
