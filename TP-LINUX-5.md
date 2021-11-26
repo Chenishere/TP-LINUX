@@ -64,20 +64,33 @@ yce        26738    1509  0 17:46 pts/0    00:00:00 grep --color=auto mariadb
 
 🌞 **Firewall**
 
-- pour autoriser les connexions qui viendront de la machine `web.tp5.linux`, il faut conf le firewall
-  - ouvrez le port utilisé par MySQL à l'aide d'une commande `firewall-cmd`
-
-> Rappel : il y a [le mémo Réseau Rocky](../../cours/memos/rocky_network.md) pour ça.
-
+```bash
+[yce@db ~]$ sudo firewall-cmd --add-port=3306/tcp --permanent
+success
+[yce@db ~]$ sudo firewall-cmd --reload
+success
+```
 ## 2. Conf MariaDB
 
 Première étape : le `mysql_secure_installation`. C'est un binaire qui sert à effectuer des configurations très récurrentes, on fait ça sur toutes les bases de données à l'install.  
 C'est une question de sécu.
 
 🌞 **Configuration élémentaire de la base**
+```bash
+[yce@db ~]$ mysql_secure_installation
 
-- exécutez la commande `mysql_secure_installation`
-  - plusieurs questions successives vont vous être posées
+NOTE: RUNNING ALL PARTS OF THIS SCRIPT IS RECOMMENDED FOR ALL MariaDB
+      SERVERS IN PRODUCTION USE!  PLEASE READ EACH STEP CAREFULLY!
+
+In order to log into MariaDB to secure it, we'll need the current
+password for the root user.  If you've just installed MariaDB, and
+you haven't set the root password yet, the password will be blank,
+so you should just press enter here.
+```
+\textbf{Question 1}
+
+
+- plusieurs questions successives vont vous être posées
   - expliquez avec des mots, de façon concise, ce que signifie chacune des questions
   - expliquez pourquoi vous répondez telle ou telle réponse (avec la sécurité en tête)
 
