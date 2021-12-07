@@ -33,7 +33,17 @@ Je vous laisse faire pour cette partie, avec vos ptites mains, vot' ptite tête 
 - pour me prouver que c'est fait dans le compte-rendu, vous le ferez depuis le terminal de la VM
 - la commande `lsblk` liste les périphériques de stockage branchés à la machine
 - vous mettrez en évidence le disque que vous venez d'ajouter dans la sortie de `lsblk`
-
+```bash
+[yce@backup ~]$ lsblk
+NAME        MAJ:MIN RM  SIZE RO TYPE MOUNTPOINT
+sda           8:0    0    8G  0 disk
+├─sda1        8:1    0    1G  0 part /boot
+└─sda2        8:2    0    7G  0 part
+  ├─rl-root 253:0    0  6.2G  0 lvm  /
+  └─rl-swap 253:1    0  820M  0 lvm  [SWAP]
+sdb           8:16   0    5G  0 disk
+sr0          11:0    1 1024M  0 rom
+```
 # II. Partitioning
 
 > [**Référez-vous au mémo LVM pour réaliser cette partie.**](../../cours/memos/lvm.md)
@@ -47,12 +57,40 @@ Allons !
 🌞 **Partitionner le disque à l'aide de LVM**
 
 - créer un *physical volume (PV)* : le nouveau disque ajouté à la VM
+
+`1`
+```bash
+[yce@backup ~]$ sudo pvcreate /dev/sdb
+[sudo] password for yce:
+  Physical volume "/dev/sdb" successfully created.
+```
+`2`
+```bash
+[yce ~]$ sudo pvs
+  PV         VG Fmt  Attr PSize  PFree
+  /dev/sda2  rl lvm2 a--  <7.00g    0
+  /dev/sdb      lvm2 ---   5.00g 5.00g
+```
 - créer un nouveau *volume group (VG)*
-  - il devra s'appeler `backup`
-  - il doit contenir le PV créé à l'étape précédente
+`1`
+```bash
+[yce@backup ~]$ sudo vgcreate backup /dev/sdb
+  Volume group "backup" successfully created
+```
+`2`
+```bash
+[yce@backup ~]$ sudo vgs
+  VG     #PV #LV #SN Attr   VSize  VFree
+  backup   1   0   0 wz--n- <5.00g <5.00g
+  rl       1   2   0 wz--n- <7.00g     0
+```
 - créer un nouveau *logical volume (LV)* : ce sera la partition utilisable
-  - elle doit être dans le VG `backup`
-  - elle doit occuper tout l'espace libre
+`1`
+```bash
+
+```
+`2`
+
 
 🌞 **Formater la partition**
 
