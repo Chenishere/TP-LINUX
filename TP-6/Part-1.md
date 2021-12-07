@@ -66,7 +66,7 @@ Allons !
 ```
 `2`
 ```bash
-[yce ~]$ sudo pvs
+[yce@backup ~]$ sudo pvs
   PV         VG Fmt  Attr PSize  PFree
   /dev/sda2  rl lvm2 a--  <7.00g    0
   /dev/sdb      lvm2 ---   5.00g 5.00g
@@ -87,40 +87,85 @@ Allons !
 - créer un nouveau *logical volume (LV)* : ce sera la partition utilisable
 `1`
 ```bash
-
+[yce@backup ~]$ sudo lvcreate -l 100%FREE backup -n data
+  Logical volume "data" created.
 ```
 `2`
-
+```bash
+[yce@backup ~]$ sudo lvs
+  LV   VG     Attr       LSize   Pool Origin Data%  Meta%  Move Log Cpy%Sync Convert
+  data backup -wi-a-----  <5.00g
+  root rl     -wi-ao----  <6.20g
+  swap rl     -wi-ao---- 820.00m
+```
 
 🌞 **Formater la partition**
 
 - vous formaterez la partition en ext4 (avec une commande `mkfs`)
   - le chemin de la partition, vous pouvez le visualiser avec la commande `lvdisplay`
   - pour rappel un *Logical Volume (LVM)* **C'EST** une partition
+ ```bash 
+[yce@backup ~]$ sudo mkfs -t ext4 /dev/backup/data
+mke2fs 1.45.6 (20-Mar-2020)
+Creating filesystem with 1309696 4k blocks and 327680 inodes
+Filesystem UUID: 9aa95643-f5bc-411c-b9c8-1e91097dfa75
+Superblock backups stored on blocks:
+        39868, 98904, 164840, 228476, 294912, 819200, 884736
 
+Allocating group tables: done
+Writing inode tables: done
+Creating journal (16384 blocks): done
+Writing superblocks and filesystem accounting information: done
+```
 🌞 **Monter la partition**
 
 - montage de la partition (avec la commande `mount`)
   - la partition doit être montée dans le dossier `/backup`
+```bash
+[yce@backup ~]$ sudo mkdir /mnt/backup
+[yce@backup ~]$ sudo mount /dev/backup/data /mnt/backup
+```
   - preuve avec une commande `df -h` que la partition est bien montée
+```bash
+[yce@backup ~]$ df -h
+Filesystem               Size  Used Avail Use% Mounted on
+devtmpfs                 387M     0  387M   0% /dev
+tmpfs                    405M     0  405M   0% /dev/shm
+tmpfs                    405M  5.6M  400M   2% /run
+tmpfs                    405M     0  405M   0% /sys/fs/cgroup
+/dev/mapper/rl-root      6.2G  2.5G  3.8G  40% /
+/dev/sda1               1014M  266M  749M  27% /boot
+tmpfs                     81M     0   81M   0% /run/user/1000
+/dev/mapper/backup-data  4.9G   20M  4.6G   1% /mnt/backup
+```
   - prouvez que vous pouvez lire et écrire des données sur cette partition
+```bash
+[yce@backup ~]$ sudo nano /mnt/backup/Mugen
+[yce@backup ~]$ sudo cat /mnt/backup/Mugen
+Mugen
+```
 - définir un montage automatique de la partition (fichier `/etc/fstab`)
   - vous vérifierez que votre fichier `/etc/fstab` fonctionne correctement
-
+```bash
+[yce@backup ~]$ cat /etc/fstab
+[...]
+/dev/mapper/backup-data /mnt/backup ext4 defaults 0 0
+```
+```bash
+[yce@backup ~]$ sudo mount -av
+/                        : ignored
+/boot                    : already mounted
+none                     : ignored
+mount: /mnt/backup does not contain SELinux labels.
+       You just mounted an file system that supports labels which does not
+       contain labels, onto an SELinux box. It is likely that confined
+       applications will generate AVC messages and not be allowed access to
+       this file system.  For more details see restorecon(8) and mount(8).
+/mnt/backup              : successfully mounted
+```
 ---
 
 Ok ! Za, z'est fait. On a un espace de stockage dédié pour nos sauvegardes.  
 Passons à la suite, [la partie 2 : installer un serveur NFS](./part2.md).
 
-Ou alors passez au bonus ?
-
-# III. Bonus
-
-➜ Ajouter un deuxième disque de 5Go à la VM et faire une partition de 10Go
-
-- faites en un PV
-- ajoutez le au VG existant (il fait donc 10 Go maintenant)
-- étendez la partition à 10Go
-- prouvez que la partition utilisable fait 10Go désormais
-
-![I Know LVM](./pics/i_know_lvm.jpg)
+![Part 1 !](https://static.wikia.nocookie.net/champloo/images/e/ec/Jin.jpg/revision/latest?cb=20120619045500)
